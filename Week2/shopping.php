@@ -1,87 +1,114 @@
 <?php
-class CartItem{
+class CartItem
+{
     private $name;
     private $price;
     private $quantity;
     public function __construct($name, $price, $quantity)
     {
-        if (empty(trim($name))){
-            throw new Exception("Ten san pham khong hop le.");
-        }
-        if (!is_numeric($price) || $price <= 0){
-            throw new Exception("Gia san pham phai lon hon 0.");
-        }
-        if (!is_numeric($quantity) || $quantity <= 0){
-            throw new Exception("So luong san pham phai lon hon 0.");
-        }
         $this->name = $name;
         $this->price = $price;
         $this->quantity = $quantity;
     }
-    public function getName(){
+    public function getName()
+    {
         return $this->name;
     }
-    public function getPrice(){
+    public function getPrice()
+    {
         return $this->price;
     }
-    public function getQuantity(){
+    public function getQuantity()
+    {
         return $this->quantity;
     }
-    public function getTotal(){
-        return $this->price*$this->quantity;
+    public function getTotal()
+    {
+        return $this->price * $this->quantity;
     }
 }
-class ShoppingCart{
-    private $items=[];
-    public function getItem(){
+class ShoppingCart
+{
+    private $items = [];
+    public function getItems()
+    {
         return $this->items;
     }
-    public function addItem($item){
-        if($item->price>0 && $item->quantity>0)
-            array_push($this->items,$item);
+    public function addItem($item)
+    {
+        if ($item === null || $item->getPrice() <= 0 || $item->getQuantity() <= 0) {
+            return false;
+        }
+        $this->items[] = $item;
+        return true;
     }
-    public function removeItem($name){
-        $found = false;
-        foreach ($this->items as $key=>$item){
-            if ($item->name === $name){
+    public function removeItem($name)
+    {
+        foreach ($this->getItems() as $key => $item) {
+            if ($item->getName() === $name) {
                 unset($this->items[$key]);
-                $found = true;
-                break;
+                $this->items = array_values($this->items);
+                return true;
             }
         }
-        if (!$found){
-            echo "Khong tim thay san pham.";
-        }
+        return false;
     }
-    public function calculateTotal(){
+    public function calculateTotal()
+    {
         $total = 0;
-        foreach ($this->items as $item){
+        foreach ($this->items as $item) {
             $total += $item->getTotal();
         }
         return $total;
     }
-    public function displayCart(){
+    public function displayCart()
+    {
         echo "Gio hang:" . "<br>";
-        foreach ($this->items as $item){
-            echo "Ten san pham: " . $item->name . "<br>";
-            echo "Don gia: " . $item->price . "<br>";
-            echo "So luong: " . $item->quantity . "<br>";
+        foreach ($this->items as $item) {
+            echo "Ten san pham: " . $item->getName() . "<br>";
+            echo "Don gia: " . $item->getPrice() . "<br>";
+            echo "So luong: " . $item->getQuantity() . "<br>";
             echo "<br>";
         }
     }
 }
+function createCartItem($name, $price, $quantity)
+{
+    if (trim($name) === "" || $price <= 0 || $quantity <= 0) {
+        return null;
+    }
+    return new CartItem($name, $price, $quantity);
+}
+function handleAddItem($items, $item)
+{
+    if ($items->addItem($item)) {
+        echo "Them vao gio hang thanh cong." . "<br>";
+    } else {
+        echo "Them vao gio hang that bai." . "<br>";
+    }
+}
+function handleRemoveItem($items, $item)
+{
+    if ($items->removeItem($item)) {
+        echo "Xoa khoi gio hang thanh cong." . "<br>";
+    } else {
+        echo "Xoa khoi gio hang that bai." . "<br>";
+    }
+}
 $cart1 = new ShoppingCart();
-$item1 = new CartItem("pen",10000,2);
-$item2 = new CartItem("pencil",5000,2);
-$item3 = new CartItem("book",20000,2);
-$item4 = new CartItem("ruler",3000,2);
-$cart1->addItem($item1);
-$cart1->addItem($item2);
-$cart1->addItem($item3);
-$cart1->addItem($item4);
+
+$item1 = createCartItem("pen", 10000, 2);
+$item2 = createCartItem("pencil", 5000, 2);
+$item3 = createCartItem("book", 20000, 2);
+$item4 = createCartItem("ruler", 3000, 2);
+
+handleAddItem($cart1, $item1);
+handleAddItem($cart1, $item2);
+handleAddItem($cart1, $item3);
+handleAddItem($cart1, $item4);
+
 $cart1->displayCart();
 echo "Tong so tien: " . $cart1->calculateTotal() . "<br>";
 echo "<br>";
-$cart1->removeItem("pen");
+handleRemoveItem($cart1, "pen");
 $cart1->displayCart();
-?>
