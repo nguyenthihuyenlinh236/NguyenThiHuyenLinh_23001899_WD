@@ -48,20 +48,15 @@ DELETE FROM movies
 WHERE title = 'Doraemon';
 
 -- Số ghế đã bán của từng phim
-SELECT
-    title,
-    total_seats - available_seats AS sold_seats
+SELECT title, total_seats - available_seats AS sold_seats
 FROM movies;
 
 -- Doanh thu từng phim
-SELECT
-    title,
-    (total_seats - available_seats) * price AS revenue
+SELECT title, (total_seats - available_seats) * price AS revenue
 FROM movies;
 
 -- Tổng doanh thu
-SELECT
-    SUM((total_seats - available_seats) * price) AS total_revenue
+SELECT SUM((total_seats - available_seats) * price) AS total_revenue
 FROM movies;
 
 -- Phim bán được nhiều vé nhất
