@@ -1,46 +1,57 @@
-CREATE table cart_items
+CREATE TABLE cart_items
 (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL,
-    price DECIMAL(10,2) NOT NULL,
-    quantity INT NOT NULL
+    name VARCHAR(100) NOT NULL UNIQUE,
+    price DECIMAL(10,2) NOT NULL CHECK (price > 0),
+    quantity INT NOT NULL CHECK (quantity > 0)
 );
+
 INSERT INTO cart_items (name, price, quantity)
-VALUES 
-("egg tart", 100000, 2),
-("pancake", 50000, 2),
-("black forest", 200000, 2),
-("cup cake", 100000, 2),
-('cheese cake', 500000,10),
-('croissant', 200000, 5);
+VALUES
+('Egg Tart', 100000, 2),
+('Pancake', 50000, 2),
+('Black Forest', 200000, 2),
+('Cup Cake', 100000, 2),
+('Cheese Cake', 500000, 10),
+('Croissant', 200000, 5);
 
-select * from cart_items;
+-- Lấy toàn bộ sản phẩm
+SELECT *
+FROM cart_items;
 
-select * 
-from cart_items
-where price > 100000;
+-- Sản phẩm có giá > 100000
+SELECT *
+FROM cart_items
+WHERE price > 100000;
 
-select * 
-from cart_items
-where quantity > 5;
+-- Sản phẩm có số lượng > 5
+SELECT *
+FROM cart_items
+WHERE quantity > 5;
 
+-- Sắp xếp theo giá giảm dần
 SELECT *
 FROM cart_items
 ORDER BY price DESC;
 
+-- Cập nhật giá Pancake
 UPDATE cart_items
-SET  price = 300000
-WHERE  name = 'pancake';
+SET price = 300000
+WHERE name = 'Pancake';
 
+-- Cập nhật số lượng Cup Cake
 UPDATE cart_items
-SET  quantity = 100
-WHERE  name = 'cup cake';
+SET quantity = 100
+WHERE name = 'Cup Cake';
 
-DELETE FROM cart_items 
-WHERE name = 'egg tart';
+-- Xóa Egg Tart
+DELETE FROM cart_items
+WHERE name = 'Egg Tart';
 
-select name, quantity, price*quantity as amount 
-from cart_items;
+-- Tính thành tiền của từng sản phẩm
+SELECT name, quantity, price * quantity AS amount
+FROM cart_items;
 
-select sum(price*quantity)
-from cart_items;
+-- Tính tổng giá trị giỏ hàng
+SELECT SUM(price * quantity) AS total_amount
+FROM cart_items;
