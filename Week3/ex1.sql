@@ -5,13 +5,14 @@ CREATE table cart_items
     price DECIMAL(10,2) NOT NULL,
     quantity INT NOT NULL
 );
-INSERT INTO cart_items (id, name, price, quantity)
+INSERT INTO cart_items (name, price, quantity)
 VALUES 
-("pen", 10000, 2),
-("pencil", 5000, 2),
-("book", 20000, 2),
-("ruler", 3000, 2),
-('eraser', 5000,10);
+("egg tart", 100000, 2),
+("pancake", 50000, 2),
+("black forest", 200000, 2),
+("cup cake", 100000, 2),
+('cheese cake', 500000,10),
+('croissant', 200000, 5);
 
 select * from cart_items;
 
@@ -28,15 +29,15 @@ FROM cart_items
 ORDER BY price DESC;
 
 UPDATE cart_items
-SET  price = 100000
-WHERE  name = 'book';
+SET  price = 300000
+WHERE  name = 'pancake';
 
 UPDATE cart_items
 SET  quantity = 100
-WHERE  name = 'pen';
+WHERE  name = 'cup cake';
 
 DELETE FROM cart_items 
-WHERE name = 'ruler';
+WHERE name = 'egg tart';
 
 select name, quantity, price*quantity as amount 
 from cart_items;
