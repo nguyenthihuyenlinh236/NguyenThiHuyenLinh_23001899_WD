@@ -1,54 +1,73 @@
-CREATE table movies
+CREATE TABLE movies
 (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(100) NOT NULL,
-    price DECIMAL(10,2) NOT NULL,
-    total_seats INT NOT NULL,
-    available_seats INT NOT NULL
+    title VARCHAR(100) NOT NULL UNIQUE,
+    price DECIMAL(10,2) NOT NULL CHECK (price > 0),
+    total_seats INT NOT NULL CHECK (total_seats > 0),
+    available_seats INT NOT NULL CHECK (
+        available_seats >= 0
+        AND available_seats <= total_seats
+    )
 );
 
-insert into movies (title, price, total_seats,available_seats)
-values
-("Doraemon", 80000, 80, 40),
-("A New Dawn", 100000, 100,80),
-("Hello World", 120000, 80, 60),
-( "Conan Movie 7", 90000, 120, 100),
-("Your title", 90000, 100, 70),
-("Suzume", 45000, 100, 60);
+INSERT INTO movies (title, price, total_seats, available_seats)
+VALUES
+('Doraemon', 80000, 80, 40),
+('A New Dawn', 100000, 100, 80),
+('Hello World', 120000, 80, 60),
+('Conan Movie 7', 90000, 120, 100),
+('Your Title', 90000, 100, 70),
+('Suzume', 45000, 100, 60);
 
-select * from movies;
+-- Lấy toàn bộ phim
+SELECT *
+FROM movies;
 
-select * 
-from movies
-where price > 100000;
+-- Phim có giá vé > 100000
+SELECT *
+FROM movies
+WHERE price > 100000;
 
-select * 
-from movies
-where available_seats > 50;
+-- Phim còn > 50 ghế
+SELECT *
+FROM movies
+WHERE available_seats > 50;
 
+-- Sắp xếp giá giảm dần
 SELECT *
 FROM movies
 ORDER BY price DESC;
 
+-- Cập nhật số ghế còn lại
 UPDATE movies
-SET  available_seats = 40
-WHERE  title = 'Hello World';
+SET available_seats = 40
+WHERE title = 'Hello World';
 
-DELETE FROM movies 
+-- Xóa phim
+DELETE FROM movies
 WHERE title = 'Doraemon';
 
-select title, (total_seats - available_seats) as sold_seats 
-from movies;
+-- Số ghế đã bán của từng phim
+SELECT
+    title,
+    total_seats - available_seats AS sold_seats
+FROM movies;
 
-select title, (total_seats - available_seats)*price as amount
-from movies;
+-- Doanh thu từng phim
+SELECT
+    title,
+    (total_seats - available_seats) * price AS revenue
+FROM movies;
 
-select sum((total_seats - available_seats)*price) as total
-from movies;
+-- Tổng doanh thu
+SELECT
+    SUM((total_seats - available_seats) * price) AS total_revenue
+FROM movies;
 
-select title
-from movies
-where (total_seats - available_seats) = (
-    select max((total_seats - available_seats)
-    from movies)
+-- Phim bán được nhiều vé nhất
+SELECT title
+FROM movies
+WHERE total_seats - available_seats = (
+    SELECT MAX(total_seats - available_seats)
+    FROM movies
 );
