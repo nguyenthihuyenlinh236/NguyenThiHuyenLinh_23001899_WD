@@ -1,9 +1,9 @@
 CREATE TABLE cart_items
 (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL UNIQUE,
-    price DECIMAL(10,2) NOT NULL CHECK (price > 0),
-    quantity INT NOT NULL CHECK (quantity > 0)
+    name VARCHAR(100) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    quantity INT NOT NULL
 );
 
 INSERT INTO cart_items (name, price, quantity)
