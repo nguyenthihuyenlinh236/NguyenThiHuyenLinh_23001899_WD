@@ -1,7 +1,7 @@
 </main>
 <hr>
 <footer>
-    <p>Shopping Cart - PHP & MySQL</p>
+    <p>Xin cảm ơn!</p>
 </footer>
 </body>
 

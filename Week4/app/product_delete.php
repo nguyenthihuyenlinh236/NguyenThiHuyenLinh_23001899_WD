@@ -35,44 +35,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $error = "Đã xảy ra lỗi khi xóa sản phẩm.";
     }
 }
+require_once __DIR__ . "/views/header.php";
 ?>
+<h2>Xóa sản phẩm</h2>
 
-<!DOCTYPE html>
-<html lang="vi">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xóa sản phẩm</title>
-</head>
-
-<body>
-    <h2>Xóa sản phẩm</h2>
-
-    <?php if ($error !== ""): ?>
-        <p style="color: red;">
-            <?= htmlspecialchars($error) ?>
-        </p>
-    <?php endif; ?>
-
-    <p>
-        Em có chắc chắn muốn xóa sản phẩm
-        <strong><?= htmlspecialchars($product["name"]) ?></strong>
-        không?
+<?php if ($error !== ""): ?>
+    <p style="color: red;">
+        <?= htmlspecialchars($error) ?>
     </p>
+<?php endif; ?>
 
-    <p>
-        ID: <?= htmlspecialchars((string)$product["id"]) ?><br>
-        Giá: <?= number_format((float)$product["price"], 0, ',', '.') ?> đ<br>
-        Số lượng: <?= htmlspecialchars((string)$product["quantity"]) ?>
-    </p>
+<p>
+    Em có chắc chắn muốn xóa sản phẩm
+    <strong><?= htmlspecialchars($product["name"]) ?></strong>
+    không?
+</p>
 
-    <form action="product_delete.php" method="POST">
-        <input type="hidden" name="id" value="<?= htmlspecialchars((string)$product["id"]) ?>">
+<p>
+    ID: <?= htmlspecialchars((string)$product["id"]) ?><br>
+    Giá: <?= number_format((float)$product["price"], 0, ',', '.') ?> đ<br>
+    Số lượng: <?= htmlspecialchars((string)$product["quantity"]) ?>
+</p>
 
-        <button type="submit">Xác nhận xóa</button>
-        <a href="product_list.php">Hủy</a>
-    </form>
-</body>
+<form action="product_delete.php" method="POST">
+    <input type="hidden" name="id" value="<?= htmlspecialchars((string)$product["id"]) ?>">
 
-</html>
+    <button type="submit">Xác nhận xóa</button>
+    <a href="product_list.php">Hủy</a>
+</form>
+<?php
+// Hiển thị footer dùng chung
+require_once __DIR__ . "/views/footer.php";
+?>

@@ -73,55 +73,46 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 }
+require_once __DIR__ . "/views/header.php";
 ?>
+<h2>Sửa sản phẩm</h2>
 
-<!DOCTYPE html>
-<html lang="vi">
+<?php if (!empty($errors)): ?>
+    <ul style="color: red;">
+        <?php foreach ($errors as $error): ?>
+            <li><?= htmlspecialchars($error) ?></li>
+        <?php endforeach; ?>
+    </ul>
+<?php endif; ?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sửa sản phẩm</title>
-</head>
+<form action="" method="POST">
+    <div>
+        <label for="name">Tên sản phẩm:</label>
+        <input type="text" id="name" name="name" value="<?= htmlspecialchars($name) ?>" required>
+    </div>
 
-<body>
-    <h2>Sửa sản phẩm</h2>
+    <br>
 
-    <?php if (!empty($errors)): ?>
-        <ul style="color: red;">
-            <?php foreach ($errors as $error): ?>
-                <li><?= htmlspecialchars($error) ?></li>
-            <?php endforeach; ?>
-        </ul>
-    <?php endif; ?>
+    <div>
+        <label for="price">Giá:</label>
+        <input type="number" id="price" name="price" min="0.01" step="any" value="<?= htmlspecialchars($price) ?>"
+            required>
+    </div>
 
-    <form action="" method="POST">
-        <div>
-            <label for="name">Tên sản phẩm:</label>
-            <input type="text" id="name" name="name" value="<?= htmlspecialchars($name) ?>" required>
-        </div>
+    <br>
 
-        <br>
+    <div>
+        <label for="quantity">Số lượng:</label>
+        <input type="number" id="quantity" name="quantity" min="0" step="1" value="<?= htmlspecialchars($quantity) ?>"
+            required>
+    </div>
 
-        <div>
-            <label for="price">Giá:</label>
-            <input type="number" id="price" name="price" min="0.01" step="any" value="<?= htmlspecialchars($price) ?>"
-                required>
-        </div>
+    <br>
 
-        <br>
-
-        <div>
-            <label for="quantity">Số lượng:</label>
-            <input type="number" id="quantity" name="quantity" min="0" step="1"
-                value="<?= htmlspecialchars($quantity) ?>" required>
-        </div>
-
-        <br>
-
-        <button type="submit">Cập nhật</button>
-        <a href="product_list.php">Quay lại</a>
-    </form>
-</body>
-
-</html>
+    <button type="submit">Cập nhật</button>
+    <a href="product_list.php">Quay lại</a>
+</form>
+<?php
+// Hiển thị footer dùng chung
+require_once __DIR__ . "/views/footer.php";
+?>
