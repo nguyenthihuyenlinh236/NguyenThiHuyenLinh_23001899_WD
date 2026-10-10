@@ -42,7 +42,7 @@ require_once __DIR__ . "/views/header.php";
                     </td>
 
                     <td>
-                        <?= number_format((float)$product["price"], 2, ",", ".") ?>
+                        <?= number_format((float)$product["price"], 0, ",", ".") ?>
                         đ
                     </td>
 
