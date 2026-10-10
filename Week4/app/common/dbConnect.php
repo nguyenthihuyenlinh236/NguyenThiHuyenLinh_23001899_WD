@@ -17,5 +17,5 @@ try {
         PDO::ERRMODE_EXCEPTION
     );
 } catch (PDOException $e) {
-    die("Database connection failed.");
+    die("Kết nối dữ liệu thất bại.");
 }
