@@ -23,3 +23,9 @@ VALUES
 ('Blueberry Muffin', 28000, 18),
 ('Panna Cotta', 35000, 15),
 ('Macaron Box', 80000, 6);
+
+create table users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+)

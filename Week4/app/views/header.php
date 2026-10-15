@@ -1,3 +1,8 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -14,6 +19,14 @@
             <a href="index.php">Trang chủ</a> |
             <a href="product_list.php">Danh sách sản phẩm</a> |
             <a href="product_add.php">Thêm sản phẩm</a>
+            <?php if (isset($_SESSION["user_id"])): ?>
+                <span>
+                    Xin chào,
+                    <?= htmlspecialchars($_SESSION["username"]) ?>
+                </span>
+                |
+                <a href="logout.php">Đăng xuất</a>
+            <?php endif; ?>
         </nav>
         <hr>
     </header>
