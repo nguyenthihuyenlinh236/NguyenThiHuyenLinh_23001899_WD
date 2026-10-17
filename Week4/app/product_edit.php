@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/common/auth.php";
 require_once __DIR__ . "/model/product.php";
 
 $errors = [];
@@ -78,11 +79,11 @@ require_once __DIR__ . "/views/header.php";
 <h2>Sửa sản phẩm</h2>
 
 <?php if (!empty($errors)): ?>
-    <ul style="color: red;">
-        <?php foreach ($errors as $error): ?>
-            <li><?= htmlspecialchars($error) ?></li>
-        <?php endforeach; ?>
-    </ul>
+<ul style="color: red;">
+    <?php foreach ($errors as $error): ?>
+    <li><?= htmlspecialchars($error) ?></li>
+    <?php endforeach; ?>
+</ul>
 <?php endif; ?>
 
 <form action="" method="POST">

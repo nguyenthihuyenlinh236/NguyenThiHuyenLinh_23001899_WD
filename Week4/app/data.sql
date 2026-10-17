@@ -28,4 +28,8 @@ create table users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL
-)
+);
+
+INSERT INTO users (username, password)
+VALUES
+('huyenlinh', '$2y$10$2XfUxzX3O5gP4X68UlO2/.qhM683FEP6VXZl.u22mA8w.lgWMilHO');

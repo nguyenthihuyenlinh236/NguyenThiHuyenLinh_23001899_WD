@@ -1,3 +1,5 @@
+<?php
+require_once __DIR__ . "/common/auth.php"; ?>
 <?php require_once __DIR__ . "/views/header.php"; ?>
 
 <h2>Trang chủ</h2>

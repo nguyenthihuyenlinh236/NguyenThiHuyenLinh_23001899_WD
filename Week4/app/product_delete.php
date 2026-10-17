@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/common/auth.php";
 require_once __DIR__ . "/model/product.php";
 
 $id = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
@@ -40,9 +41,9 @@ require_once __DIR__ . "/views/header.php";
 <h2>Xóa sản phẩm</h2>
 
 <?php if ($error !== ""): ?>
-    <p style="color: red;">
-        <?= htmlspecialchars($error) ?>
-    </p>
+<p style="color: red;">
+    <?= htmlspecialchars($error) ?>
+</p>
 <?php endif; ?>
 
 <p>

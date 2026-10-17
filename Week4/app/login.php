@@ -47,20 +47,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 ?>
 
-<?php require_once __DIR__ . "/view/header.php"; ?>
+<?php require_once __DIR__ . "/views/header.php"; ?>
 
 <h2>Đăng nhập</h2>
 
 <?php if (isset($_GET["registered"]) && $_GET["registered"] === "1"): ?>
-    <p style="color: green;">
-        Đăng ký thành công. Vui lòng đăng nhập.
-    </p>
+<p style="color: green;">
+    Đăng ký thành công. Vui lòng đăng nhập.
+</p>
 <?php endif; ?>
 
 <?php if ($error !== ""): ?>
-    <p style="color: red;">
-        <?= htmlspecialchars($error) ?>
-    </p>
+<p style="color: red;">
+    <?= htmlspecialchars($error) ?>
+</p>
 <?php endif; ?>
 
 <form method="POST" action="login.php">
@@ -86,4 +86,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <a href="register.php">Đăng ký</a>
 </p>
 
-<?php require_once __DIR__ . "/view/footer.php"; ?>
+<?php require_once __DIR__ . "/views/footer.php"; ?>

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/common/auth.php";
 require_once __DIR__ . "/model/product.php";
 
 // Lấy danh sách sản phẩm từ database
@@ -27,42 +28,42 @@ require_once __DIR__ . "/views/header.php";
 
     <tbody>
         <?php if (empty($products)): ?>
-            <tr>
-                <td colspan="5">Chưa có sản phẩm nào.</td>
-            </tr>
+        <tr>
+            <td colspan="5">Chưa có sản phẩm nào.</td>
+        </tr>
         <?php else: ?>
-            <?php foreach ($products as $product): ?>
-                <tr>
-                    <td>
-                        <?= htmlspecialchars((string)$product["id"]) ?>
-                    </td>
+        <?php foreach ($products as $product): ?>
+        <tr>
+            <td>
+                <?= htmlspecialchars((string)$product["id"]) ?>
+            </td>
 
-                    <td>
-                        <?= htmlspecialchars($product["name"]) ?>
-                    </td>
+            <td>
+                <?= htmlspecialchars($product["name"]) ?>
+            </td>
 
-                    <td>
-                        <?= number_format((float)$product["price"], 0, ",", ".") ?>
-                        đ
-                    </td>
+            <td>
+                <?= number_format((float)$product["price"], 0, ",", ".") ?>
+                đ
+            </td>
 
-                    <td>
-                        <?= htmlspecialchars((string)$product["quantity"]) ?>
-                    </td>
+            <td>
+                <?= htmlspecialchars((string)$product["quantity"]) ?>
+            </td>
 
-                    <td>
-                        <a href="product_edit.php?id=<?= urlencode((string)$product["id"]) ?>">
-                            [Sửa]
-                        </a>
+            <td>
+                <a href="product_edit.php?id=<?= urlencode((string)$product["id"]) ?>">
+                    [Sửa]
+                </a>
 
-                        |
+                |
 
-                        <a href="product_delete.php?id=<?= urlencode((string)$product["id"]) ?>">
-                            [Xóa]
-                        </a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
+                <a href="product_delete.php?id=<?= urlencode((string)$product["id"]) ?>">
+                    [Xóa]
+                </a>
+            </td>
+        </tr>
+        <?php endforeach; ?>
         <?php endif; ?>
     </tbody>
 </table>
