@@ -2,7 +2,7 @@
 $prices = [5000, 10000, 15000, 20000, 25000];
 function calculateTotal($prices)
 {
-    if ($prices === null) {
+    if (empty($prices)) {
         return 0;
     }
     $total = 0;
@@ -14,10 +14,11 @@ function calculateTotal($prices)
 
 function findMaxPrice($prices)
 {
-    if ($prices === null) {
+    if (empty($prices)) {
         echo "Khong co gia tri.";
+    } else {
+        return max($prices);
     }
-    return max($prices);
 }
 
 echo calculateTotal($prices);
