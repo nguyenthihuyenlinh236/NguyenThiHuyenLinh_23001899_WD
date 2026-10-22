@@ -21,5 +21,5 @@ function findMaxPrice($prices)
     }
 }
 
-echo calculateTotal($prices);
+echo calculateTotal($prices) . "<br>";
 echo findMaxPrice($prices);
