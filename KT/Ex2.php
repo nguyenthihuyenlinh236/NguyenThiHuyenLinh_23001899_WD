@@ -21,5 +21,5 @@ function findMaxPrice($prices)
     }
 }
 
-echo calculateTotal($prices) . "<br>";
-echo findMaxPrice($prices);
+echo "Tong gia tien: " . calculateTotal($prices) . "<br>";
+echo "Gia tien lon nhat: " . findMaxPrice($prices);
