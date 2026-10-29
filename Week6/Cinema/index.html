@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt vé xem phim</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+        }
+
+        .container {
+            max-width: 440px;
+            margin: 40px auto;
+            padding: 24px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px #00000015;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        .field>label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        select {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 10px;
+        }
+
+        input[type="number"] {
+            width: 70px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .reset {
+            background: #4b5563;
+        }
+
+        .error {
+            color: #dc2626;
+            font-size: 14px;
+        }
+
+        .total {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .confirmation {
+            margin-top: 24px;
+            padding: 16px;
+            border-radius: 8px;
+            background: #ecfdf5;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" class="container">
+        <h1>Đặt vé xem phim</h1>
+        <h2>Phim: Hành trình kỳ diệu</h2>
+
+        <!-- Ngăn trình duyệt tải lại trang khi gửi form -->
+        <form @submit.prevent="datVe">
+            <div class="field">
+                <label for="hoTen">Họ tên khách hàng</label>
+
+                <input id="hoTen" type="text" v-model.trim="hoTen" placeholder="Nhập họ tên" required>
+            </div>
+
+            <div class="field">
+                <label for="suatChieu">Suất chiếu</label>
+
+                <select id="suatChieu" v-model="suatChieu">
+                    <option value="09:00">09:00</option>
+                    <option value="14:00">14:00</option>
+                    <option value="19:30">19:30</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Loại vé</label>
+
+                <div class="options">
+                    <label>
+                        <input type="radio" name="loaiVe" value="thuong" v-model="loaiVe">
+                        Thường: 70.000đ
+                    </label>
+
+                    <label>
+                        <input type="radio" name="loaiVe" value="vip" v-model="loaiVe">
+                        VIP: 100.000đ
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="soLuong">Số lượng vé</label>
+
+                <div class="options">
+                    <button type="button" @click="giamSoLuong" :disabled="!soLuongHopLe || soLuong <= 1">
+                        −
+                    </button>
+
+                    <input id="soLuong" type="number" v-model.number="soLuong" min="1" max="10" step="1" required>
+
+                    <button type="button" @click="tangSoLuong" :disabled="!soLuongHopLe || soLuong >= 10">
+                        +
+                    </button>
+                </div>
+
+                <p class="error" v-if="!soLuongHopLe">
+                    Số lượng vé phải là số nguyên từ 1 đến 10.
+                </p>
+            </div>
+
+            <div class="field">
+                <label>
+                    <input type="checkbox" v-model="chonCombo">
+                    Combo bắp nước: 45.000đ / đơn
+                </label>
+            </div>
+
+            <p class="total" v-if="soLuongHopLe">
+                Tổng tiền: {{ dinhDangTien(tongTien) }}
+            </p>
+            <p class="error" v-else>
+                Vui lòng nhập số lượng hợp lệ để tính tổng tiền.
+            </p>
+
+            <div class="options">
+                <button type="submit" :disabled="!coTheDatVe">
+                    Đặt vé
+                </button>
+
+                <button type="button" class="reset" @click="datLai">
+                    Đặt lại
+                </button>
+            </div>
+        </form>
+
+        <!-- Hiển thị bản chụp thông tin tại thời điểm đặt vé -->
+        <div class="confirmation" v-if="xacNhan">
+            <h2>Đặt vé thành công!</h2>
+
+            <p><strong>Khách hàng:</strong> {{ xacNhan.hoTen }}</p>
+            <p><strong>Phim:</strong> Hành trình kỳ diệu</p>
+            <p><strong>Suất chiếu:</strong> {{ xacNhan.suatChieu }}</p>
+            <p><strong>Loại vé:</strong> {{ xacNhan.loaiVe }}</p>
+            <p><strong>Số lượng:</strong> {{ xacNhan.soLuong }}</p>
+            <p>
+                <strong>Combo bắp nước:</strong>
+                {{ xacNhan.chonCombo ? 'Có' : 'Không' }}
+            </p>
+            <p>
+                <strong>Tổng tiền:</strong>
+                {{ dinhDangTien(xacNhan.tongTien) }}
+            </p>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                    hoTen: "",
+                    suatChieu: "09:00",
+                    loaiVe: "thuong",
+                    soLuong: 1,
+                    chonCombo: false,
+                    xacNhan: null
+                };
+            },
+
+            computed: {
+                giaVe() {
+                    return this.loaiVe === "vip" ? 100000 : 70000;
+                },
+
+                soLuongHopLe() {
+                    return Number.isInteger(this.soLuong)
+                        && this.soLuong >= 1
+                        && this.soLuong <= 10;
+                },
+
+                tongTien() {
+                    if (!this.soLuongHopLe) {
+                        return 0;
+                    }
+
+                    const tienCombo = this.chonCombo ? 45000 : 0;
+
+                    return this.giaVe * this.soLuong + tienCombo;
+                },
+
+                coTheDatVe() {
+                    return this.hoTen.trim() !== ""
+                        && this.soLuongHopLe;
+                }
+            },
+
+            methods: {
+                tangSoLuong() {
+                    if (this.soLuongHopLe && this.soLuong < 10) {
+                        this.soLuong++;
+                    }
+                },
+
+                giamSoLuong() {
+                    if (this.soLuongHopLe && this.soLuong > 1) {
+                        this.soLuong--;
+                    }
+                },
+
+                datLai() {
+                    this.hoTen = "";
+                    this.suatChieu = "09:00";
+                    this.loaiVe = "thuong";
+                    this.soLuong = 1;
+                    this.chonCombo = false;
+                    this.xacNhan = null;
+                },
+
+                datVe() {
+                    if (!this.coTheDatVe) {
+                        return;
+                    }
+
+                    this.xacNhan = {
+                        hoTen: this.hoTen.trim(),
+                        suatChieu: this.suatChieu,
+                        loaiVe: this.loaiVe === "vip" ? "VIP" : "Thường",
+                        soLuong: this.soLuong,
+                        chonCombo: this.chonCombo,
+                        tongTien: this.tongTien
+                    };
+                },
+
+                dinhDangTien(soTien) {
+                    return soTien.toLocaleString("vi-VN") + " đồng";
+                }
+            }
+        }).mount("#app");
+    </script>
+</body>
+
+</html>

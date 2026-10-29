@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý công việc cá nhân</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+        }
+
+        .container {
+            max-width: 520px;
+            margin: 40px auto;
+            padding: 24px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 12px #00000015;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 26px;
+        }
+
+        .add-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            min-width: 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            padding: 10px 14px;
+            border: none;
+            border-radius: 6px;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        select {
+            padding: 8px;
+            margin-left: 8px;
+        }
+
+        ul {
+            padding: 0;
+            list-style: none;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .task-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .task-name {
+            overflow-wrap: anywhere;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: #6b7280;
+        }
+
+        .delete {
+            background: #dc2626;
+        }
+
+        .error {
+            color: #dc2626;
+        }
+
+        .empty {
+            padding: 16px;
+            text-align: center;
+            color: #6b7280;
+            background: #f9fafb;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" class="container">
+        <h1>Công việc trong ngày</h1>
+
+        <!-- Nhấn Enter hoặc nút Thêm đều gửi form -->
+        <form class="add-form" @submit.prevent="themCongViec">
+            <input type="text" v-model.trim="tenMoi" placeholder="Nhập công việc mới" aria-label="Tên công việc mới"
+                @input="thongBaoLoi = ''">
+
+            <button type="submit">Thêm</button>
+        </form>
+
+        <p class="error" v-if="thongBaoLoi">
+            {{ thongBaoLoi }}
+        </p>
+
+        <!-- Thống kê toàn bộ danh sách, không phụ thuộc bộ lọc -->
+        <p>
+            Tổng số: <strong>{{ tongSoCongViec }}</strong>
+            — Chưa hoàn thành:
+            <strong>{{ soViecChuaHoanThanh }}</strong>
+        </p>
+
+        <label for="boLoc">Lọc công việc:</label>
+        <select id="boLoc" v-model="boLoc">
+            <option value="tatCa">Tất cả</option>
+            <option value="chuaHoanThanh">Chưa hoàn thành</option>
+            <option value="daHoanThanh">Đã hoàn thành</option>
+        </select>
+
+        <!-- Phân biệt danh sách gốc rỗng và kết quả lọc rỗng -->
+        <p class="empty" v-if="tongSoCongViec === 0">
+            Chưa có công việc nào. Hãy thêm công việc mới!
+        </p>
+
+        <p class="empty" v-else-if="congViecDaLoc.length === 0">
+            Không có công việc nào thuộc trạng thái đang chọn.
+        </p>
+
+        <ul v-else>
+            <li v-for="viec in congViecDaLoc" :key="viec.id">
+                <label class="task-label">
+                    <input type="checkbox" v-model="viec.hoanThanh">
+
+                    <span class="task-name" :class="{ completed: viec.hoanThanh }">
+                        {{ viec.ten }}
+                    </span>
+                </label>
+
+                <button type="button" class="delete" @click="xoaCongViec(viec.id)">
+                    Xóa
+                </button>
+            </li>
+        </ul>
+
+        <button type="button" class="delete" @click="xoaViecDaHoanThanh"
+            :disabled="tongSoCongViec === soViecChuaHoanThanh">
+            Xóa các việc đã hoàn thành
+        </button>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                    tenMoi: "",
+                    boLoc: "tatCa",
+                    thongBaoLoi: "",
+                    idTiepTheo: 4,
+
+                    danhSach: [
+                        {
+                            id: 1,
+                            ten: "Học VueJS",
+                            hoanThanh: false
+                        },
+                        {
+                            id: 2,
+                            ten: "Làm bài tập lập trình Web",
+                            hoanThanh: false
+                        },
+                        {
+                            id: 3,
+                            ten: "Ôn từ vựng tiếng Nhật",
+                            hoanThanh: true
+                        }
+                    ]
+                };
+            },
+
+            computed: {
+                tongSoCongViec() {
+                    return this.danhSach.length;
+                },
+
+                soViecChuaHoanThanh() {
+                    return this.danhSach.filter(
+                        viec => !viec.hoanThanh
+                    ).length;
+                },
+
+                congViecDaLoc() {
+                    if (this.boLoc === "chuaHoanThanh") {
+                        return this.danhSach.filter(
+                            viec => !viec.hoanThanh
+                        );
+                    }
+
+                    if (this.boLoc === "daHoanThanh") {
+                        return this.danhSach.filter(
+                            viec => viec.hoanThanh
+                        );
+                    }
+
+                    return this.danhSach;
+                }
+            },
+
+            methods: {
+                themCongViec() {
+                    const ten = this.tenMoi.trim();
+
+                    if (ten === "") {
+                        this.thongBaoLoi =
+                            "Vui lòng nhập tên công việc.";
+                        return;
+                    }
+
+                    this.danhSach.push({
+                        id: this.idTiepTheo++,
+                        ten: ten,
+                        hoanThanh: false
+                    });
+
+                    this.tenMoi = "";
+                    this.thongBaoLoi = "";
+                },
+
+                xoaCongViec(id) {
+                    this.danhSach = this.danhSach.filter(
+                        viec => viec.id !== id
+                    );
+                },
+
+                xoaViecDaHoanThanh() {
+                    this.danhSach = this.danhSach.filter(
+                        viec => !viec.hoanThanh
+                    );
+                }
+            }
+        }).mount("#app");
+    </script>
+</body>
+
+</html>

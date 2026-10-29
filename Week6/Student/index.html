@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thẻ thông tin sinh viên</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+        }
+
+        .student-card {
+            max-width: 360px;
+            margin: 40px auto;
+            padding: 24px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px #00000015;
+        }
+
+        .avatar {
+            display: block;
+            width: 120px;
+            height: 120px;
+            margin: auto;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .gioi {
+            color: green;
+        }
+
+        .kha {
+            color: blue;
+        }
+
+        .trung-binh {
+            color: #a65d00;
+        }
+
+        .chua-dat {
+            color: red;
+        }
+
+        button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+        }
+
+        .introduction {
+            padding: 12px;
+            background: #eff6ff;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="student-card">
+            <!-- v-bind: Gắn đường dẫn ảnh và nội dung thay thế -->
+            <img class="avatar" v-bind:src="anhDaiDien" v-bind:alt="'Ảnh đại diện của ' + hoTen">
+
+            <!-- Hiển thị họ tên bằng {{ }} -->
+            <h2>{{ hoTen }}</h2>
+
+            <p><strong>Mã sinh viên:</strong> {{ maSinhVien }}</p>
+
+            <!-- Hiển thị tên lớp bằng v-text -->
+            <p><strong>Lớp:</strong> <span v-text="lop"></span></p>
+
+            <p><strong>Điểm trung bình:</strong> {{ diemTrungBinh }}</p>
+
+            <!-- :class đổi màu theo điểm trung bình -->
+            <p>
+                <strong>Xếp loại:</strong>
+
+                <span :class="{
+                        'gioi': diemTrungBinh >= 8 && diemTrungBinh <= 10,
+                        'kha': diemTrungBinh >= 6.5 && diemTrungBinh < 8,
+                        'trung-binh': diemTrungBinh >= 5 && diemTrungBinh < 6.5,
+                        'chua-dat': diemTrungBinh < 5
+                    }">
+                    <span v-if="diemTrungBinh >= 8 && diemTrungBinh <= 10">
+                        Giỏi
+                    </span>
+                    <span v-else-if="diemTrungBinh >= 6.5 && diemTrungBinh < 8">
+                        Khá
+                    </span>
+                    <span v-else-if="diemTrungBinh >= 5 && diemTrungBinh < 6.5">
+                        Trung bình
+                    </span>
+                    <span v-else-if="diemTrungBinh < 5">
+                        Chưa đạt
+                    </span>
+                    <span v-else>Điểm không hợp lệ</span>
+                </span>
+            </p>
+
+            <!-- Hiển thị trạng thái bằng v-if / v-else -->
+            <p>
+                <strong>Trạng thái:</strong>
+                <span v-if="dangHoc">Đang học</span>
+                <span v-else>Đã nghỉ</span>
+            </p>
+
+            <!-- Đảo giá trị true/false khi nhấn nút -->
+            <button @click="hienGioiThieu = !hienGioiThieu">
+                {{ hienGioiThieu ? 'Ẩn giới thiệu' : 'Hiện giới thiệu' }}
+            </button>
+
+            <!-- v-show bật/tắt phần giới thiệu -->
+            <p class="introduction" v-show="hienGioiThieu">
+                {{ gioiThieu }}
+            </p>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    maSinhVien: "23001899",
+                    hoTen: "Nguyễn Thị Huyền Linh",
+                    lop: "K68A4 Khoa học máy tính và thông tin",
+                    anhDaiDien: "rose.jpg",
+                    diemTrungBinh: 8.5,
+                    dangHoc: true,
+                    hienGioiThieu: false,
+                    gioiThieu: "Xin chào! Mình là sinh viên ngành Khoa học máy tính."
+                };
+            }
+        }).mount("#app");
+    </script>
+</body>
+
+</html>
