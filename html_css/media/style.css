@@ -1,0 +1,87 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+ 
+.container{
+    margin: 0px 50px;
+    overflow: hidden;
+}
+ 
+.content{
+    float: left;
+    width: 70%;
+}
+ 
+.content .item{
+    height: 100px;
+    margin: 10px;
+    background: #ccc;
+}
+ 
+.sidebar{
+    float: right;
+    width: 30%;
+}
+ 
+.sidebar .widget{
+    height: 100px;
+    margin: 10px;
+    background: #ccc;
+}
+
+@media only screen and (min-width: 320px) and (max-width: 374px)
+{
+    .container{
+        margin: 0px 10px;
+    }
+     
+     
+    .content, .sidebar{
+        float:none;
+        width: 100%;
+    }
+}
+ 
+ 
+@media only screen and (min-width: 374px) and (max-width: 424px)
+{
+    .container{
+        margin: 0px 10px;
+    }
+     
+    .content, .sidebar{
+        float:none;
+        width: 100%;
+    }
+}
+ 
+ 
+@media only screen and (min-width: 425px) and (max-width: 767px)
+{
+     .container{
+        margin: 0px 10px;
+    }
+     
+     .content, .sidebar{
+        float:none;
+        width: 100%;
+    }
+}
+ 
+ 
+@media only screen and (min-width: 768px) and (max-width: 1023px)
+{
+     .container{
+        margin: 0px 10px;
+    }
+     
+}
+ 
+@media only screen and (min-width: 1024px) and (max-width: 1439px)
+{
+     .container{
+        margin: 0px 10px;
+    }
+     
+}

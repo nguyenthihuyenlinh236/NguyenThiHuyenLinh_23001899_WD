@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <title>Hoa đào tháng ba</title>
+        <meta charset="utf-8"/>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Libertinus+Math:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link href="./style.css" rel="stylesheet">
+    </head>
+    <body>
+        <header class="main-header">
+            <div class="header-container">
+                <!--MOBILE VIEW-->
+                <div class="mobile-view">
+                    <!--1. Muc luc chuong truyen-->
+                    <button class="icon-btn" id="btn-chapter-menu" title="Chapters">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <!--2. logo-->
+                    <a href="/"  class="mobile-logo-link">
+                        <img src="./images/logo.jpg" alt="logo" class="logo-img">
+                    </a>
+                    <!--3. search-->
+                    <button class="icon-btn" id="btn-mobile-search-toggle" title="search">
+                        <span class="material-symbols-outlined">search</span>
+                    </button>
+                    <!--4. Mode-->
+                    <button class="icon-btn theme-toggle" title="Change mode">
+                        <span class="material-symbols-outlined">dark_mode</span>
+                    </button>
+                    <!--5. avatar-->
+                    <a href="/profile" class="avatar-link">
+                        <img src="https://i.pravatar.cc/100" alt="Avatar" class="user-avatar">
+                    </a>
+                    <!--Tim kiem an-->
+                    <div class="mobile-search-overlay" id="mobile-search-box">
+                        <input type="text" placeholder="Enter story name">
+                        <button type="button" id="btn-close-search">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                <!--DESKTOP VIEW-->
+                <div class="desktop-view">
+                    <!--logo-->
+                    <a href="/" class="brand-group">
+                        <img src="./images/logo.jpg" alt="logo" class="logo-img">
+                        <span class="brand-name" >Hoa đào tháng ba</span>
+                    </a>
+                    <!--search-->
+                    <div class="search-bar">
+                        <input type="text" placeholder="Enter story name">
+                        <form action="#" method="get">
+                            <input type="text" name="q" placeholder="Search">
+                            <button type="submit"></button>
+                        </form>
+                    </div>
+                    <!--right buttons-->
+                    <div class="right-actions">
+                    <a href="https://facebook.com/your-page" target="_blank" class="fb-link" title="Facebook">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    
+                    <!-- Nút đổi Light/Dark mode -->
+                    <button class="icon-btn theme-toggle" title="Đổi giao diện">
+                        <i class="fas fa-moon"></i>
+                    </button>
+
+                    <!-- Avatar Người dùng -->
+                    <a href="/profile" class="avatar-link" title="Tài khoản">
+                        <img src="https://i.pravatar.cc/100" alt="Avatar" class="user-avatar">
+                    </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <script>
+            const themeToggles = document.querySelectorAll('.theme-toggle');
+            themeToggles.forEach(btn=>{
+                btn.addEventListener('click',()=>{
+                    document.body.classList.toggle('dark-mode');
+                    const icons = document.querySelectorAll('.theme-toggle i');
+                    icons.forEach(icon =>{
+                        if (document.body.classList.contains('dark-mode')){
+                            icon.className='fas fa-sun';
+                        }else{
+                            icon.className='fas fa-moon';
+                        }
+                    })
+                })
+            })
+            const searchToggleBtn = document.getElementById('btn-mobile-search-toggle');
+            const closeSearchBtn = document.getElementById('btn-close-search');
+            const searchBox = document.getElementById('mobile-search-box');
+            searchToggleBtn.addEventListener('click', () => {
+                searchBox.classList.add('active');
+                });
+
+            closeSearchBtn.addEventListener('click', () => {
+                searchBox.classList.remove('active');
+    });
+        </script>
+    </body>
+</html>

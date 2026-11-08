@@ -1,0 +1,27 @@
+.post .thumb{
+    float: left;
+    width: 200px;
+}
+.post .thumb img{
+    max-width: 100%;
+    display: inherit;
+}
+.post{
+    border: solid 1px #ddd;
+    background: lightcyan;
+    margin: 10px 20px;
+    overflow: hidden;
+}
+
+.post .infor{
+    margin-left: 220px;
+}
+.post .infor h3{
+    margin: 15px 0px 20px 0px;
+}
+.post .infor h3 a{
+    font-size: 18px;
+    text-decoration: dotted;
+    color: lightcoral;
+    text-transform: uppercase;
+}

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiệm bánh nhà Linh</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Be Vietnam Pro", sans-serif;
+            background: #fff8f3;
+            color: #51382f;
+        }
+
+        button {
+            font: inherit;
+            cursor: pointer;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .subtitle {
+            color: #916d5e;
+            line-height: 1.7;
+        }
+
+        h1 {
+            margin: 12px 0;
+            font-size: 36px;
+        }
+
+        .product-list {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 20px;
+            align-items: start;
+        }
+
+        .product-card {
+            overflow: hidden;
+            background: white;
+            border: 1px solid #f0dfd4;
+            border-radius: 16px;
+            box-shadow: 0 6px 18px #51382f0a;
+        }
+
+        .product-image {
+            display: block;
+            width: 100%;
+            height: 190px;
+            object-fit: cover;
+            background: #f5e8df;
+        }
+
+        .product-content {
+            padding: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .available {
+            background: #e8f5e9;
+            color: #267337;
+        }
+
+        .sold-out {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        h2 {
+            font-size: 19px;
+            margin: 16px 0 10px;
+        }
+
+        .price {
+            color: #ad593b;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .stock {
+            font-size: 13px;
+            color: #806b61;
+        }
+
+        .description-button,
+        .buy-button {
+            width: 100%;
+            padding: 11px;
+            border-radius: 8px;
+        }
+
+        .description-button {
+            margin-top: 8px;
+            border: 1px solid #d8b7a5;
+            background: white;
+            color: #86523c;
+        }
+
+        .description {
+            padding: 12px;
+            background: #fff8f3;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        .buy-button {
+            margin-top: 12px;
+            border: none;
+            background: #a96143;
+            color: white;
+        }
+
+        .buy-button:disabled {
+            background: #d6cbc5;
+            color: #655750;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 900px) {
+            .product-list {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 520px) {
+            .product-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main id="app" class="container" v-cloak>
+        <header>
+            <p>BÁNH NGỌT & NƯỚC UỐNG</p>
+            <h1>Tiệm bánh nhà Linh</h1>
+            <p class="subtitle">
+                Bánh ngọt, trà thơm.
+            </p>
+        </header>
+
+        <section class="product-list" aria-label="Danh sách sản phẩm">
+            <the-san-pham v-for="sp in danhSachSanPham" :key="sp.id" :ten="sp.ten" :gia="sp.gia" :anh="sp.anh"
+                :mo-ta="sp.moTa" :so-luong-ton="sp.soLuongTon"></the-san-pham>
+        </section>
+    </main>
+
+    <!-- 1. Nạp Vue -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- 2. Nạp định nghĩa component -->
+    <script src="./components/TheSanPham.js"></script>
+
+    <script>
+        // 3. Tạo ứng dụng cha, quản lý danh sách sản phẩm.
+        const app = Vue.createApp({
+            data() {
+                return {
+                    danhSachSanPham: [
+                        {
+                            id: 1,
+                            ten: "Bánh Tiramisu",
+                            gia: 55000,
+                            anh: "./images/tiramisu.jpg",
+                            moTa: "Bánh mềm thơm cà phê, kết hợp kem mascarpone béo nhẹ và lớp cacao phủ mịn.",
+                            soLuongTon: 12
+                        },
+                        {
+                            id: 2,
+                            ten: "Bánh Cheesecake",
+                            gia: 49000,
+                            anh: "./images/cheesecake.jpg",
+                            moTa: "Bánh phô mai béo mịn với đế bánh quy giòn, dùng kèm sốt dâu chua ngọt.",
+                            soLuongTon: 0
+                        },
+                        {
+                            id: 3,
+                            ten: "Matcha Latte",
+                            gia: 45000,
+                            anh: "./images/matcha-latte.jpg",
+                            moTa: "Matcha thơm dịu hòa cùng sữa tươi, vị đắng nhẹ cân bằng với vị ngọt béo.",
+                            soLuongTon: 20
+                        },
+                        {
+                            id: 4,
+                            ten: "Trà đào",
+                            gia: 35000,
+                            anh: "./images/tra-dao.jpg",
+                            // Không truyền mô tả cụ thể:
+                            // component sẽ dùng giá trị mặc định.
+                            soLuongTon: 15
+                        }
+                    ]
+                };
+            }
+        });
+
+        // 4. Đăng ký component trước khi mount.
+        app.component("the-san-pham", TheSanPham);
+
+        // 5. Gắn ứng dụng vào giao diện.
+        app.mount("#app");
+    </script>
+</body>
+
+</html>

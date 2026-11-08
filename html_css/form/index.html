@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <title>Form</title>
+        <style>
+            table td{
+                padding: 5px 10px;
+            }
+            input, textarea, select{
+                border: solid 1px #ddd;
+                padding: 5px 20px;
+                width: 100%;
+            }
+            select{
+                width: 180px;
+            }
+            input[type="submit"]{
+                width: auto;
+                background: green;
+                color: #fff;
+            }
+        </style>
+    </head>
+    <body>
+        <form method="post" action="url">
+            <table>
+                <tr>
+                    <td>Your name</td>
+                    <td>
+                        <input type="text" value="" name="name"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>
+                        <input type="text" value="" name="email"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Feedback</td>
+                    <td>
+                        <textarea cols="30" rows="10" name="feedback"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Department</td>
+                    <td>
+                        <select name="department">
+                            <option>R&D department</option>
+                            <option>Sales department</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="submit" value="Submit"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        
+    </body>
+</html>
