@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quản lý sản phẩm</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f7f6;
+            color: #193a35;
+            font: 16px/1.5 "Be Vietnam Pro", system-ui, sans-serif;
+        }
+
+        main {
+            max-width: 940px;
+            margin: 40px auto;
+            padding: 0 16px;
+        }
+
+        section {
+            background: white;
+            padding: 20px;
+            margin: 16px 0;
+            border: 1px solid #d5e2df;
+            border-radius: 12px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        fieldset {
+            border: 0;
+            padding: 0;
+            margin: 0;
+        }
+
+        .fields {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        input {
+            display: block;
+            width: 100%;
+            margin-top: 4px;
+            padding: 9px;
+            border: 1px solid #8ca39e;
+            border-radius: 6px;
+            font: inherit;
+        }
+
+        button {
+            font: inherit;
+            padding: 6px 12px;
+            cursor: pointer;
+            color: #104c42;
+            background: #e8f2ef;
+            border: 0;
+            border-radius: 6px;
+        }
+
+        button[type=submit] {
+            background: #126453;
+            color: white;
+        }
+
+        button.delete,
+        .error {
+            color: #a62b32;
+        }
+
+        button:disabled {
+            opacity: .55;
+            cursor: default;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #d5e2df;
+        }
+
+        td:last-child {
+            white-space: nowrap;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+
+        @media(max-width: 640px) {
+            .fields {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main id="app" v-cloak>
+        <h1>Quản lý sản phẩm</h1>
+        <section>
+            <h2>{{ editId === null ? 'Thêm sản phẩm' : 'Sửa sản phẩm #' + editId }}</h2>
+            <form @submit.prevent="saveProduct">
+                <fieldset :disabled="busy">
+                    <div class="fields">
+                        <label>Tên sản phẩm<input v-model.trim="form.name" required></label>
+                        <label>Đơn giá (đồng)<input type="number" v-model.number="form.price" min="1" max="2147483647"
+                                step="1" required></label>
+                        <label>Số lượng tồn<input type="number" v-model.number="form.stock" min="0" max="2147483647"
+                                step="1" required></label>
+                    </div>
+                    <button type="submit">Lưu</button>
+                    <button type="button" v-if="editId !== null" @click="resetForm">Hủy sửa</button>
+                </fieldset>
+            </form>
+        </section>
+        <p class="error" role="alert" v-if="error">{{ error }}</p>
+        <p role="status" v-if="notice">{{ notice }}</p>
+        <section>
+            <h2>Danh sách sản phẩm</h2>
+            <button v-if="loadFailed" :disabled="busy" @click="loadProducts">Tải lại danh sách</button>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tên sản phẩm</th>
+                            <th>Đơn giá</th>
+                            <th>Số lượng tồn</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="product in products" :key="product.id">
+                            <td>{{ product.name }}</td>
+                            <td>{{ formatPrice(product.price) }} đồng</td>
+                            <td>{{ product.stock }}</td>
+                            <td>
+                                <button :disabled="busy || loadFailed" @click="editProduct(product)">Sửa</button>
+                                <button class="delete" :disabled="busy || loadFailed"
+                                    @click="deleteProduct(product)">Xóa</button>
+                            </td>
+                        </tr>
+                        <tr v-if="!products.length && !loadFailed">
+                            <td colspan="4">{{ busy ? 'Đang tải…' : 'Chưa có sản phẩm.' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script>
+        const apiUrl = './api/products.php';
+        const emptyForm = () => ({ name: '', price: '', stock: 0 });
+
+        async function request(url, options = {}) {
+            let response;
+            try {
+                response = await fetch(url, { cache: 'no-store', ...options });
+            } catch {
+                throw new Error('Không kết nối được với máy chủ.');
+            }
+            const result = await response.json().catch(() => {
+                throw new Error('Máy chủ không trả JSON. Hãy kiểm tra đường dẫn api/products.php.');
+            });
+            if (!response.ok || result?.success !== true) {
+                throw new Error(result?.message || 'Yêu cầu thất bại (HTTP ' + response.status + ').');
+            }
+            return result;
+        }
+
+        Vue.createApp({
+            data() {
+                return {
+                    products: [], form: emptyForm(), editId: null, busy: false,
+                    loadFailed: false, error: '', notice: ''
+                };
+            },
+            mounted() {
+                this.loadProducts();
+            },
+            methods: {
+                formatPrice(value) {
+                    return Number(value).toLocaleString('vi-VN');
+                },
+                async loadProducts() {
+                    this.busy = true;
+                    this.error = '';
+                    try {
+                        const result = await request(apiUrl);
+                        if (!Array.isArray(result.data)) throw new Error('Danh sách trả về không hợp lệ.');
+                        this.products = result.data;
+                        this.loadFailed = false;
+                    } catch (error) {
+                        this.loadFailed = true;
+                        this.error = 'Chưa tải được danh sách. ' + error.message;
+                    } finally {
+                        this.busy = false;
+                    }
+                },
+                resetForm() {
+                    this.editId = null;
+                    this.form = emptyForm();
+                },
+                editProduct(product) {
+                    this.editId = product.id;
+                    this.form = { name: product.name, price: Number(product.price), stock: Number(product.stock) };
+                    this.error = '';
+                    this.notice = '';
+                },
+                async saveProduct() {
+                    if (this.busy) return;
+                    const adding = this.editId === null;
+                    this.busy = true;
+                    this.notice = '';
+                    this.error = '';
+                    try {
+                        await request(adding ? apiUrl : apiUrl + '?id=' + encodeURIComponent(this.editId), {
+                            method: adding ? 'POST' : 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(this.form)
+                        });
+                        this.resetForm();
+                        this.notice = adding ? 'Đã thêm sản phẩm.' : 'Đã cập nhật sản phẩm.';
+                        await this.loadProducts();
+                    } catch (error) {
+                        this.error = error.message;
+                    } finally {
+                        this.busy = false;
+                    }
+                },
+                async deleteProduct(product) {
+                    if (this.busy || !window.confirm('Xóa sản phẩm “' + product.name + '”?')) return;
+                    this.busy = true;
+                    this.notice = '';
+                    this.error = '';
+                    try {
+                        await request(apiUrl + '?id=' + encodeURIComponent(product.id), { method: 'DELETE' });
+                        if (this.editId === product.id) this.resetForm();
+                        this.notice = 'Đã xóa sản phẩm.';
+                        await this.loadProducts();
+                    } catch (error) {
+                        this.error = error.message;
+                    } finally {
+                        this.busy = false;
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
