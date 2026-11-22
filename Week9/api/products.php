@@ -7,10 +7,7 @@ header('Content-Type: application/json; charset=utf-8');
 function respond(int $status, array $data): void
 {
     http_response_code($status);
-    echo json_encode(
-        $data,
-        JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE
-    );
+    echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
     exit;
 }
 
@@ -22,21 +19,24 @@ function fail(int $status, string $message): void
     ]);
 }
 
-function getProductId(): int
+function positiveInteger($value): ?int
 {
-    $value = $_GET['id'] ?? null;
-
     if (!is_string($value) || !ctype_digit($value)) {
-        fail(400, 'Mã sản phẩm không hợp lệ.');
+        return null;
     }
 
-    $id = filter_var(
-        $value,
-        FILTER_VALIDATE_INT,
-        ['options' => ['min_range' => 1]]
-    );
+    $number = filter_var($value, FILTER_VALIDATE_INT, [
+        'options' => ['min_range' => 1, 'max_range' => 2147483647]
+    ]);
 
-    if ($id === false) {
+    return is_int($number) ? $number : null;
+}
+
+function getProductId(): int
+{
+    $id = positiveInteger($_GET['id'] ?? null);
+
+    if ($id === null) {
         fail(400, 'Mã sản phẩm không hợp lệ.');
     }
 
@@ -74,19 +74,11 @@ function readProduct(): array
         fail(422, 'Tên sản phẩm phải có từ 1 đến 100 ký tự.');
     }
 
-    if (
-        !is_int($price) ||
-        $price < 1 ||
-        $price > 2147483647
-    ) {
+    if (!is_int($price) || $price <= 0 || $price > 2147483647) {
         fail(422, 'Đơn giá phải là số nguyên lớn hơn 0.');
     }
 
-    if (
-        !is_int($stock) ||
-        $stock < 0 ||
-        $stock > 2147483647
-    ) {
+    if (!is_int($stock) || $stock < 0 || $stock > 2147483647) {
         fail(422, 'Số lượng tồn phải là số nguyên không âm.');
     }
 
@@ -98,7 +90,7 @@ function readProduct(): array
 }
 
 try {
-    $method = $_SERVER['REQUEST_METHOD'];
+    $method = $_SERVER['REQUEST_METHOD'] ?? '';
 
     if (!in_array($method, ['GET', 'POST', 'PUT', 'DELETE'], true)) {
         header('Allow: GET, POST, PUT, DELETE');
@@ -117,45 +109,64 @@ try {
     );
 
     if ($method === 'GET') {
-        $stmt = $pdo->query(
+        $page = positiveInteger($_GET['page'] ?? '1');
+        $limit = $_GET['limit'] ?? '5';
+
+        if ($page === null) {
+            fail(400, 'Trang phải là số nguyên dương.');
+        }
+
+        if (!is_string($limit) || $limit !== '5') {
+            fail(400, 'Giới hạn sản phẩm mỗi trang phải bằng 5.');
+        }
+
+        $total = (int) $pdo->query('SELECT COUNT(*) FROM products')->fetchColumn();
+        $totalPages = max(1, (int) ceil($total / 5));
+        $page = min($page, $totalPages);
+        $offset = ($page - 1) * 5;
+
+        $stmt = $pdo->prepare(
             'SELECT id, name, price, stock, image
              FROM products
-             ORDER BY id DESC'
+             ORDER BY id DESC
+             LIMIT :limit OFFSET :offset'
         );
+        $stmt->bindValue(':limit', 5, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
 
         respond(200, [
             'success' => true,
-            'data' => $stmt->fetchAll()
+            'data' => $stmt->fetchAll(),
+            'pagination' => [
+                'page' => $page,
+                'limit' => 5,
+                'total' => $total,
+                'total_pages' => $totalPages
+            ]
         ]);
     }
 
     if ($method === 'POST') {
         $product = readProduct();
-
         $stmt = $pdo->prepare(
             'INSERT INTO products (name, price, stock)
              VALUES (:name, :price, :stock)'
         );
-
         $stmt->bindValue(':name', $product['name'], PDO::PARAM_STR);
         $stmt->bindValue(':price', $product['price'], PDO::PARAM_INT);
         $stmt->bindValue(':stock', $product['stock'], PDO::PARAM_INT);
         $stmt->execute();
 
-        $id = (int) $pdo->lastInsertId();
-
         respond(201, [
             'success' => true,
-            'id' => $id,
+            'id' => (int) $pdo->lastInsertId(),
             'message' => 'Thêm sản phẩm thành công.'
         ]);
     }
 
     $id = getProductId();
-
-    $check = $pdo->prepare(
-        'SELECT id FROM products WHERE id = :id'
-    );
+    $check = $pdo->prepare('SELECT id FROM products WHERE id = :id');
     $check->bindValue(':id', $id, PDO::PARAM_INT);
     $check->execute();
 
@@ -165,15 +176,11 @@ try {
 
     if ($method === 'PUT') {
         $product = readProduct();
-
         $stmt = $pdo->prepare(
             'UPDATE products
-             SET name = :name,
-                 price = :price,
-                 stock = :stock
+             SET name = :name, price = :price, stock = :stock
              WHERE id = :id'
         );
-
         $stmt->bindValue(':name', $product['name'], PDO::PARAM_STR);
         $stmt->bindValue(':price', $product['price'], PDO::PARAM_INT);
         $stmt->bindValue(':stock', $product['stock'], PDO::PARAM_INT);
@@ -188,9 +195,7 @@ try {
     }
 
     if ($method === 'DELETE') {
-        $stmt = $pdo->prepare(
-            'DELETE FROM products WHERE id = :id'
-        );
+        $stmt = $pdo->prepare('DELETE FROM products WHERE id = :id');
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
 

@@ -30,7 +30,4 @@ INSERT INTO products (name, price, stock) VALUES
 ('Giấy nhớ', 18000, 9),
 ('Bút dạ quang', 15000, 10),
 ('Kẹp giấy', 9000, 40),
-('Băng dính', 11000, 16),
-('Kéo', 22000, 8),
-('Hồ dán', 7000, 21),
-('Giấy A4', 65000, 6);
+('Băng dính', 11000, 16);
